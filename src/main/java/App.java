@@ -14,26 +14,38 @@ public class App {
 
     get("/", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("clients", request.session().attribute("clients"));
+//      model.put("clients", request.session().attribute("clients"));
       model.put("template", "templates/index.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    post("/clients", (request, response) -> {
+    get("clients/new", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/client-form.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
 
-      ArrayList<Client> clients = request.session().attribute("clients");
-      if (clients == null) {
-        clients = new ArrayList<Client>();
-        request.session().attribute("clients", clients);
-      }
+    get("/clients", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("clients", Client.all());
+      model.put("template", "templates/clients.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
 
+    post("/clients", (request,response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
       String name = request.queryParams("name");
       String details = request.queryParams("details");
       Client newClient = new Client(name, details);
-      clients.add(newClient);
-
       model.put("template", "templates/success.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    get("/clients/:id", (request, response) -> {
+      HashMap<String, Object> model = new HashMap<String, Object>();
+      Client client = Client.find(Integer.parseInt(request.params(":id")));
+      model.put("client", client);
+      model.put("template", "templates/client.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 

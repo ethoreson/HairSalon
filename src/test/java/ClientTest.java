@@ -29,4 +29,25 @@ public class ClientTest {
     assertEquals(true, Client.all().contains(secondClient));
   }
 
+  @Test
+  public void clear_emptiesAllClientsFromArrayList_0() {
+    Client firstClient = new Client("Client1", "new client");
+    Client.clear();
+    assertEquals(0, Client.all().size());
+  }
+
+  @Test
+  public void getId_clientInstantiateWithAnID_1() {
+    Client.clear();
+    Client firstClient = new Client("Client1", "new client");
+    assertEquals(1, firstClient.getId());
+  }
+
+  @Test
+  public void find_returnsclientWithSameId_secondTask() {
+    Client firstClient = new Client("Client1", "new client");
+    Client secondClient = new Client("Client2", "second client");
+    assertEquals(Client.find(secondClient.getId()), secondClient);
+  }
+
 }
