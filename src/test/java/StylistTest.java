@@ -1,3 +1,4 @@
+import org.sql2o.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 import java.util.List;
@@ -13,8 +14,10 @@ public class StylistTest {
   @After
   public void tearDown() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "DELETE FROM stylists *;";
-      con.createQuery(sql).executeUpdate();
+      String deleteClientsQuery = "DELETE FROM clients *;";
+      String deleteStylistsQuery = "DELETE FROM stylists *;";
+      con.createQuery(deleteClientsQuery).executeUpdate();
+      con.createQuery(deleteStylistsQuery).executeUpdate();
     }
   }
 
@@ -39,28 +42,26 @@ public class StylistTest {
   @Test
   public void all_returnsAllInstancesOfStylist_true() {
     Stylist firstStylist = new Stylist("Stylist1", "employed here for 3 years");
+    firstStylist.save();
     Stylist secondStylist = new Stylist("Stylist2", "specialty is highlights");
-    assertEquals(true, Stylist.all().contains(firstStylist));
-    assertEquals(true, Stylist.all().contains(secondStylist));
-  }
-
-  @Test
-  public void clear_emptiesAllStylistsFromList_0() {
-    Stylist newStylist = new Stylist("Stylist1", "employed here for 3 years");
-    Stylist.clear();
-    assertEquals(Stylist.all().size(), 0);
+    secondStylist.save();
+    assertEquals(true, Stylist.all().get(0).equals(firstStylist));
+    assertEquals(true, Stylist.all().get(1).equals(secondStylist));
   }
 
   @Test
   public void getId_stylistsInstantiateWithAnId_1() {
-    Stylist newStylist = new Stylist("Stylist1", "employed here for 3 years");
-    assertEquals(1, newStylist.getId());
+    Stylist testStylist = new Stylist("Stylist1", "employed here for 3 years");
+    testStylist.save();
+    assertTrue(testStylist.getId() > 0);
   }
 
   @Test
   public void find_returnsStylistWithSameId_secondStylist() {
     Stylist firstStylist = new Stylist("Stylist1", "employed here for 3 years");
+    firstStylist.save();
     Stylist secondStylist = new Stylist("Stylist2", "specialty is highlights");
+    secondStylist.save();
     assertEquals(Stylist.find(secondStylist.getId()), secondStylist);
   }
 
@@ -71,11 +72,35 @@ public class StylistTest {
   }
 
   @Test
-  public void addClient_addsClientToStylist_true() {
-    Stylist newStylist = new Stylist("Stylist1", "employed here for 3 years");
-    Client newClient = new Client("Client1", "our first client");
-    newStylist.addClient(newClient);
-    assertTrue(newStylist.getClients().contains(newClient));
+  public void equals_returnsTrueIfNamesAretheSame() {
+    Stylist firstStylist = new Stylist("Stylist1", "employed here for 3 years");
+    Stylist secondStylist = new Stylist("Stylist1", "employed here for 3 years");
+    assertTrue(firstStylist.equals(secondStylist));
+  }
+
+  @Test
+  public void save_savesIntoDatabase_true() {
+    Stylist firstStylist = new Stylist("Stylist1", "employed here for 3 years");
+    firstStylist.save();
+    assertTrue(Stylist.all().get(0).equals(firstStylist));
+  }
+
+  @Test
+  public void save_assignsIdToObject() {
+    Stylist firstStylist = new Stylist("Stylist1", "employed here for 3 years");
+    firstStylist.save();
+    Stylist savedStylist = Stylist.all().get(0);
+    assertEquals(myStylist.getId(), savedStylist.getId());
+  }
+
+  @Test
+  public void save_savesStylistIdIntoDB_true() {
+    Stylist myStylist = new Stylist("Stylist1", "employed here for 3 years");
+    myStylist.save();
+    Client myClient = new Client("Client1", "our favorite client", myStylist.getId());
+    myClient.save();
+    Client savedClient = Client.find(myClient.getId());
+    assertEquals(savedClient.getStylistId(), myStylist.getId());
   }
 
 

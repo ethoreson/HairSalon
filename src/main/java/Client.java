@@ -30,16 +30,43 @@ public class Client {
     }
   }
 
-  public static void clear() {
-    instances.clear();
-  }
+  // public static void clear() {
+  //   instances.clear();
+  // }
 
   public int getId() {
     return id;
   }
 
   public static Client find(int id) {
-//    return instances.get(id - 1);
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM clients where id=:id";
+      Client client = con.createQuery(sql)
+        .addParameter("id", id)
+        .executeAndFetchFirst(Client.class);
+      return client;
+    }
+  }
+
+  @Override
+  public boolean equals(Object otherClient) {
+    if (!(otherClient instanceof Client)) {
+      return false;
+    } else {
+      Client newClient = (Client) otherClient;
+      return this.getName().equals(newClient.getName()) && this.getId() == newClient.getId();
+    }
+  }
+
+  public void save() {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "INSERT INTO clients (name, details) VALUES (:name, :details)";
+      this.id = (int) con.createQuery(sql, true)
+        .addParameter("name", this.name)
+        .addParameter("details", this.details)
+        .executeUpdate()
+        .getKey();
+    }
   }
 
 }
