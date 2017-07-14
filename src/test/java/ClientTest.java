@@ -98,4 +98,12 @@ public class ClientTest {
     assertTrue(Client.find(999) == null);
   }
 
+  @Test
+  public void update_updatesTaskDescription_true() {
+    Client firstClient = new Client("Client1", "new client", 1);
+    firstClient.save();
+    firstClient.update("Client1", "favorite client", 1);
+    assertEquals("favorite client", Client.find(firstClient.getId()).getDetails());
+  }
+
 }
