@@ -21,4 +21,12 @@ public class ClientTest {
     assertEquals("new client", newClient.getDetails());
   }
 
+  @Test
+  public void all_returnsAllInstancesOfClient_true() {
+    Client firstClient = new Client("Client1", "new client");
+    Client secondClient = new Client("Client2", "second client");
+    assertEquals(true, Client.all().contains(firstClient));
+    assertEquals(true, Client.all().contains(secondClient));
+  }
+
 }
