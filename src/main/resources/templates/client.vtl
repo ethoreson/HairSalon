@@ -1,6 +1,18 @@
 <!--client.vtl-->
 <h1>$client.getName()</h1>
 <h2>$client.getDetails()</h2>
-<a href="/clients/new">Add another client</a>
-<a href="/clients">All clients</a>
+
+<h2>Edit client:</h2>
+
+<form action="/stylists/$stylist.getStylistId()/clients/$client.getId()" method="post">
+  <label for="name">Name</label>
+  <input id="name" name="name" type="text">
+  <label for="details">Details</label>
+  <input id="details" name="details" type="text">
+  <button type="submit" class="btn btn-info">Update Client</button>
+</form>
+
+
+<a href="/stylists/$stylist.getId()">Return to $stylist.getName()</a>
+<a href="/stylists/$stylist.getId()/clients/new">Add another client</a>
 <!--client.vtl-->
