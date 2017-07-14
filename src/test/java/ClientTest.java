@@ -3,6 +3,19 @@ import static org.junit.Assert.*;
 
 public class ClientTest {
 
+  @Before
+  public void setUp() {
+    DB.sql2o = new Sql2o("jdbc:postgresql://localhost:5432/hair_salon_test", null, null);
+  }
+
+  @After
+  public void tearDown() {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "DELETE FROM clients *;";
+      con.createQuery(sql).executeUpdate();
+    }
+  }
+
   @Test
   public void Client_instantiatesCorrectly_true() {
     Client newClient = new Client("Client1", "new client");
@@ -38,7 +51,6 @@ public class ClientTest {
 
   @Test
   public void getId_clientInstantiateWithAnID_1() {
-    Client.clear();
     Client firstClient = new Client("Client1", "new client");
     assertEquals(1, firstClient.getId());
   }

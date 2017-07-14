@@ -1,29 +1,33 @@
 import java.util.ArrayList;
 import java.util.List;
+import org.sql2o.*;
 
 public class Client {
-  private String mName;
-  private String mDetails;
-  private static List<Client> instances = new ArrayList<Client>();
-  private int mId;
+  private String name;
+  private String details;
+//  private static List<Client> instances = new ArrayList<Client>();
+  private int id;
 
   public Client(String name, String details) {
-    mName = name;
-    mDetails = details;
-    instances.add(this);
-    mId = instances.size();
+    this.name = name;
+    this.details = details;
+//    instances.add(this);
+//    id = instances.size();
   }
 
   public String getName() {
-    return mName;
+    return name;
   }
 
   public String getDetails() {
-    return mDetails;
+    return details;
   }
 
   public static List<Client> all() {
-    return instances;
+    String sql = "SELECT id, name, details FROM clients";
+    try(Connection con = DB.sql2o.open()) {
+      return con.createQuery(sql).executeAndFetch(Client.class);
+    }
   }
 
   public static void clear() {
@@ -31,11 +35,11 @@ public class Client {
   }
 
   public int getId() {
-    return mId;
+    return id;
   }
 
   public static Client find(int id) {
-    return instances.get(id - 1);
+//    return instances.get(id - 1);
   }
 
 }
