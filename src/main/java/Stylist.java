@@ -45,9 +45,15 @@ public class Stylist {
         return stylist;
       }
     }
-//   public List<Client> getClients() {
-// //    return mClients;
-//   }
+
+  public List<Client> getClients() {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM clients WHERE stylistId=:id";
+      return con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeAndFetch(Client.class);
+    }
+  }
 
 @Override
 public boolean equals(Object otherStylist) {
@@ -66,8 +72,8 @@ public boolean equals(Object otherStylist) {
       this.id = (int) con.createQuery(sql, true)
         .addParameter("name", this.name)
         .addParameter("details", this.details)
-        .executeUpdate();
-        .getKey()
+        .executeUpdate()
+        .getKey();
     }
   }
 

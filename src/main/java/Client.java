@@ -5,14 +5,13 @@ import org.sql2o.*;
 public class Client {
   private String name;
   private String details;
-//  private static List<Client> instances = new ArrayList<Client>();
   private int id;
+  private int stylistId;
 
-  public Client(String name, String details) {
+  public Client(String name, String details, int stylistId) {
     this.name = name;
     this.details = details;
-//    instances.add(this);
-//    id = instances.size();
+    this.stylistId = stylistId;
   }
 
   public String getName() {
@@ -23,8 +22,12 @@ public class Client {
     return details;
   }
 
+  public int getStylistId() {
+    return stylistId;
+  }
+
   public static List<Client> all() {
-    String sql = "SELECT id, name, details FROM clients";
+    String sql = "SELECT id, name, details, stylistId FROM clients";
     try(Connection con = DB.sql2o.open()) {
       return con.createQuery(sql).executeAndFetch(Client.class);
     }
@@ -54,16 +57,17 @@ public class Client {
       return false;
     } else {
       Client newClient = (Client) otherClient;
-      return this.getName().equals(newClient.getName()) && this.getId() == newClient.getId();
+      return this.getName().equals(newClient.getName()) && this.getId() == newClient.getId() && this.getStylistId() == newClient.getStylistId();
     }
   }
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO clients (name, details) VALUES (:name, :details)";
+      String sql = "INSERT INTO clients (name, details, stylistId) VALUES (:name, :details, :stylistId)";
       this.id = (int) con.createQuery(sql, true)
         .addParameter("name", this.name)
         .addParameter("details", this.details)
+        .addParameter("stylistId", this.stylistId)
         .executeUpdate()
         .getKey();
     }

@@ -2,6 +2,7 @@ import org.sql2o.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 public class StylistTest {
@@ -87,8 +88,8 @@ public class StylistTest {
 
   @Test
   public void save_assignsIdToObject() {
-    Stylist firstStylist = new Stylist("Stylist1", "employed here for 3 years");
-    firstStylist.save();
+    Stylist myStylist = new Stylist("Stylist1", "employed here for 3 years");
+    myStylist.save();
     Stylist savedStylist = Stylist.all().get(0);
     assertEquals(myStylist.getId(), savedStylist.getId());
   }
@@ -101,6 +102,18 @@ public class StylistTest {
     myClient.save();
     Client savedClient = Client.find(myClient.getId());
     assertEquals(savedClient.getStylistId(), myStylist.getId());
+  }
+
+  @Test
+  public void getClients_retrievesALlClientsFromDatabase_clientsList() {
+    Stylist myStylist = new Stylist("Stylist1", "employed here for 3 years");
+    myStylist.save();
+    Client firstClient = new Client("Client A", "needs a perm", myStylist.getId());
+    firstClient.save();
+    Client secondClient = new Client("Client B", "needs a dye job", myStylist.getId());
+    secondClient.save();
+    Client[] clients = new Client[] { firstClient, secondClient };
+    assertTrue(myStylist.getClients().containsAll(Arrays.asList(clients)));
   }
 
 
