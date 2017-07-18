@@ -77,4 +77,15 @@ public boolean equals(Object otherStylist) {
     }
   }
 
+  public void update(String name, String details) {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "UPDATE stylists SET name = :name, details = :details WHERE id = :id";
+      con.createQuery(sql)
+        .addParameter("name", name)
+        .addParameter("details", details)
+        .addParameter("id", id)
+        .executeUpdate();
+    }
+  }
+
 }

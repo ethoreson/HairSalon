@@ -6,7 +6,6 @@ import spark.ModelAndView;
 import spark.template.velocity.VelocityTemplateEngine;
 import static spark.Spark.*;
 
-
 public class App {
   public static void main(String[] args) {
     staticFileLocation("/public");
@@ -29,14 +28,11 @@ public class App {
 
     get("/stylists/:stylist_id/clients/:id", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      Client client = Client.find(Integer.parseInt(request.params("id")));
-      String name = request.queryParams("name");
-      String details = request.queryParams("details");
-      int stylistId = Integer.parseInt(request.params(":stylist_id"));
-      Stylist stylist = Stylist.find(client.getStylistId());
-      client.update(name, details, stylistId);
-      String url = String.format("/stylists/%d/clients/%d", stylist.getId(), client.getId());
-      response.redirect(url);
+      Stylist stylist = Stylist.find(Integer.parseInt(request.params(":stylist_id")));
+      Client client = Client.find(Integer.parseInt(request.params(":id")));
+      model.put("stylist", stylist);
+      model.put("client", client);
+      model.put("template", "templates/client.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -45,7 +41,7 @@ public class App {
       Client client = Client.find(Integer.parseInt(request.params("id")));
       String name = request.queryParams("name");
       String details = request.queryParams("details");
-      int stylistId = Integer.parseInt(request.queryParams("stylistId"));
+      int stylistId = Integer.parseInt(request.params(":stylist_id"));
       Stylist stylist = Stylist.find(client.getStylistId());
       client.update(name, details, stylistId);
       String url = String.format("/stylists/%d/clients/%d", stylist.getId(), client.getId());
@@ -103,6 +99,17 @@ public class App {
       model.put("template", "templates/stylist.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
+
+    post("stylists/:id", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
+      String name = request.queryParams("name");
+      String details = request.queryParams("details");
+      stylist.update(name, details);
+      String url = String.format("/stylists/%d", stylist.getId());
+      response.redirect(url);
+      return new ModelAndView(model, layout);
+      }, new VelocityTemplateEngine());
 
   }
 }

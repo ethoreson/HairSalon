@@ -10,6 +10,16 @@
     #end
   </ul>
 
+  <h2>Edit stylist:</h2>
+
+  <form action="/stylists/$stylist.getId()" method="post">
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text">
+    <label for="details">Details</label>
+    <input id="details" name="details" type="text">
+    <button type="submit" class="btn btn-info">Update Stylist</button>
+  </form>
+
 <a href="/stylists/$stylist.getId()/clients/new">Add a new client</a>
 <a href="/stylists">All Stylists</a>
 <!--stylist.vtl-->
