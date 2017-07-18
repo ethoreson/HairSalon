@@ -106,4 +106,13 @@ public class ClientTest {
     assertEquals("favorite client", Client.find(firstClient.getId()).getDetails());
   }
 
+  @Test
+  public void delete_deletesClient_true() {
+    Client myClient = new Client("Client1", "new client", 1);
+    myClient.save();
+    int myClientId = myClient.getId();
+    myClient.delete();
+    assertEquals(null, Client.find(myClientId));
+  }
+
 }
